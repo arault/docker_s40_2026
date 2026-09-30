@@ -26,11 +26,13 @@ services:
 
   db:
     image: mariadb:12.3
-    container_name: db
+    # container_name: db
     volumes:
       - datadb:/var/lib/mysql/
-    environment:
-      MARIADB_ROOT_PASSWORD: azerty
+    # environment:
+    #   MARIADB_ROOT_PASSWORD: azerty
+    env_file:
+      - ./mariadb.env
     networks:
       lempnet:
         ipv4_address: 172.40.0.120
