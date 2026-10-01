@@ -27,6 +27,11 @@ services:
 
   phpsvc:
     image: ${PHP_IMAGE}:${PHP_IMAGE_TAG}
+    build:
+      context: ../03_dockerfile/
+      dockerfile: ./Dockerfile
+    # Politique par défaut : télécharger l'image si elle n'est pas présente
+    pull_policy: missing
     container_name: php
     volumes:
       - ./html/:/var/www/html/
