@@ -23,9 +23,14 @@ services:
     hostname: who-2
     restart: unless-stopped
     networks:
-      whonet:
-    ports:
-      - 8082:80
+      - whonet
+      - proxynet
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxynet
+      - traefik.http.routers.who2.rule=PathPrefix(`/who-2`)
+      - traefik.http.middlewares.who2strip.stripprefix.prefixes=/who-2
+      - traefik.http.routers.who2.middlewares=who2strip
 
   who-3:
     image: traefik/whoami:v1.11
