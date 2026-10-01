@@ -1,0 +1,16 @@
+---
+entryPoints:
+  web:
+    address: ":80"
+  # Exemple d'autre entrypoint
+  # webesecure:
+  #   address: "192.168.56.200:443"
+
+api:
+  dashboard: true # Activer le dashboard web de Traefik
+  insecure: true # Simplier l'accès au dashboard
+
+providers:
+  docker:
+    endpoint: "unix:///run/docker.sock"
+    exposedByDefault: false
