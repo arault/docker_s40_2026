@@ -1,0 +1,63 @@
+---
+x-nfs: &nfs-params
+  type: nfs
+  o: addr=192.168.56.200,vers=4.2,rw
+
+x-replicas: &nb-replicas
+  deploy:
+    replicas: 2
+
+services:
+  web:
+    image: nginx:1.31
+    ports:
+      - 80:80
+    volumes:
+      - html-nfs:/usr/share/nginx/html/
+      - nginx-conf-nfs:/etc/nginx/conf.d/
+    networks:
+      lempnet:
+    <<: *nb-replicas
+
+  php:
+    image: php:8.5-fpm
+    volumes:
+      - html-nfs:/var/www/html
+    networks:
+      lempnet:
+    <<: *nb-replicas
+
+  db:
+    image: mariadb:12.3
+    volumes:
+      - datadb-nfs:/var/lib/mysql
+    secrets:
+      - mdp_mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=/run/secrets/mdp_mariadb
+    networks:
+      lempnet:
+    deploy:
+      replicas: 1
+
+secrets:
+  mdp_mariadb:
+    external: true
+    name: test
+
+volumes:
+  html-nfs:
+    driver_opts:
+      <<: *nfs-params
+      device: ":/html/"
+  nginx-conf-nfs:
+    driver_opts:
+      <<: *nfs-params
+      device: ":/nginx-conf/"
+  datadb-nfs:
+    driver_opts:
+      <<: *nfs-params
+      device: ":/mariadb/"
+
+networks:
+  lempnet:
